@@ -1,14 +1,14 @@
-From a49ec452e29581bca598011a2a49ff4014053ba7 Mon Sep 17 00:00:00 2001
+From fc300b79408493a745324dc709120fdfe1399290 Mon Sep 17 00:00:00 2001
 From: Andreas Bauer <a10r@users.noreply.github.com>
 Date: Tue, 25 Jun 2024 16:02:57 +0200
 Subject: [PATCH] [PATCH] disable optional mpv dependencies
 
 ---
  cmake/packages_check.cmake |  6 +---
- packages/ffmpeg.cmake      | 23 --------------
+ packages/ffmpeg.cmake      | 23 ----------------
  packages/libarchive.cmake  |  3 +-
- packages/mpv.cmake         | 62 +++++++++++++-------------------------
- 4 files changed, 23 insertions(+), 71 deletions(-)
+ packages/mpv.cmake         | 56 +++++++++++++-------------------------
+ 4 files changed, 21 insertions(+), 67 deletions(-)
 
 diff --git a/cmake/packages_check.cmake b/cmake/packages_check.cmake
 index e90ecfd..4779b14 100644
@@ -142,10 +142,10 @@ index 4773fae..2e9027a 100644
          -DENABLE_CPIO=OFF
          -DENABLE_CNG=OFF
 diff --git a/packages/mpv.cmake b/packages/mpv.cmake
-index 9cb510e..3c434b9 100644
+index 9cb510e..0c50335 100644
 --- a/packages/mpv.cmake
 +++ b/packages/mpv.cmake
-@@ -1,27 +1,12 @@
+@@ -1,27 +1,14 @@
  ExternalProject_Add(mpv
      DEPENDS
 -        angle-headers
@@ -164,16 +164,16 @@ index 9cb510e..3c434b9 100644
 -        uchardet
 -        openal-soft
 -        mujs
--        vulkan
+         vulkan
          shaderc
          libplacebo
          spirv-cross
--        vapoursynth
+         vapoursynth
 -        libsdl2
      GIT_REPOSITORY https://github.com/mpv-player/mpv.git
      SOURCE_DIR ${SOURCE_LOCATION}
      GIT_CLONE_FLAGS "--filter=tree:0"
-@@ -32,27 +17,32 @@ ExternalProject_Add(mpv
+@@ -32,27 +19,32 @@ ExternalProject_Add(mpv
          --cross-file=${MESON_CROSS}
          --default-library=shared
          --prefer-static
@@ -208,11 +208,9 @@ index 9cb510e..3c434b9 100644
 +        -Dlcms2=disabled
 +        -Dopenal=disabled
          -Dspirv-cross=enabled
--        -Dvulkan=enabled
--        -Dvapoursynth=enabled
+         -Dvulkan=enabled
+         -Dvapoursynth=enabled
 -        -Degl-angle=enabled
-+        -Dvulkan=disabled
-+        -Dvapoursynth=disabled
 +        -Degl-angle=disabled
 +        -Dshaderc=enabled
 +        -Diconv=disabled
@@ -220,7 +218,7 @@ index 9cb510e..3c434b9 100644
          -Dc_args='-Wno-error=int-conversion'
      BUILD_COMMAND ${EXEC} LTO_JOB=1 PDB=1 ninja -C <BINARY_DIR>
      INSTALL_COMMAND ""
-@@ -67,11 +57,6 @@ ExternalProject_Add_Step(mpv strip-binary
+@@ -67,11 +59,6 @@ ExternalProject_Add_Step(mpv strip-binary
  
  ExternalProject_Add_Step(mpv copy-binary
      DEPENDEES strip-binary
@@ -232,7 +230,7 @@ index 9cb510e..3c434b9 100644
      COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/libmpv-2.dll          ${CMAKE_CURRENT_BINARY_DIR}/mpv-dev/libmpv-2.dll
      COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/libmpv.dll.a          ${CMAKE_CURRENT_BINARY_DIR}/mpv-dev/libmpv.dll.a
      COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/libmpv/client.h       ${CMAKE_CURRENT_BINARY_DIR}/mpv-dev/include/mpv/client.h
-@@ -91,14 +76,9 @@ mv $2 $2-git-\${GIT}")
+@@ -91,14 +78,9 @@ mv $2 $2-git-\${GIT}")
  ExternalProject_Add_Step(mpv copy-package-dir
      DEPENDEES copy-binary
      COMMAND chmod 755 ${RENAME}
