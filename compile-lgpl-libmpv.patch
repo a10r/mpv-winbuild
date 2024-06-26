@@ -1,17 +1,17 @@
-From f0b890b1fdb6f41d434a9bdc8bd59823166e5151 Mon Sep 17 00:00:00 2001
-From: zhongfly <11155705+zhongfly@users.noreply.github.com>
-Date: Sun, 10 Mar 2024 10:04:23 +0800
-Subject: [PATCH] packages: compile lgpl libmpv
+From b5a5ad32366402841209a3c55318a88bfcf85cc4 Mon Sep 17 00:00:00 2001
+From: Andreas Bauer <a10r@users.noreply.github.com>
+Date: Wed, 26 Jun 2024 14:03:37 +0200
+Subject: [PATCH] patch: disable lua dependency
 
 ---
  cmake/packages_check.cmake |  6 +-----
  packages/ffmpeg.cmake      | 23 -----------------------
  packages/libarchive.cmake  |  3 +--
- packages/mpv.cmake         | 28 ++++++++--------------------
- 4 files changed, 10 insertions(+), 50 deletions(-)
+ packages/mpv.cmake         | 31 +++++++++----------------------
+ 4 files changed, 11 insertions(+), 52 deletions(-)
 
 diff --git a/cmake/packages_check.cmake b/cmake/packages_check.cmake
-index e90ecfd9..4779b140 100644
+index e90ecfd..4779b14 100644
 --- a/cmake/packages_check.cmake
 +++ b/cmake/packages_check.cmake
 @@ -6,11 +6,7 @@ if(COMPILER_TOOLCHAIN STREQUAL "gcc")
@@ -28,7 +28,7 @@ index e90ecfd9..4779b140 100644
      set(vapoursynth_pkgconfig_libs "-lVapourSynth -Wl,-delayload=VapourSynth.dll")
      set(vapoursynth_script_pkgconfig_libs "-lVSScript -Wl,-delayload=VSScript.dll")
 diff --git a/packages/ffmpeg.cmake b/packages/ffmpeg.cmake
-index c3afe92c..a91ae91b 100644
+index c3afe92..a91ae91 100644
 --- a/packages/ffmpeg.cmake
 +++ b/packages/ffmpeg.cmake
 @@ -1,18 +1,13 @@
@@ -121,7 +121,7 @@ index c3afe92c..a91ae91b 100644
          --enable-cuda-llvm
          --enable-cuvid
 diff --git a/packages/libarchive.cmake b/packages/libarchive.cmake
-index 4773faef..2e9027ae 100644
+index 4773fae..2e9027a 100644
 --- a/packages/libarchive.cmake
 +++ b/packages/libarchive.cmake
 @@ -2,7 +2,6 @@ ExternalProject_Add(libarchive
@@ -142,10 +142,10 @@ index 4773faef..2e9027ae 100644
          -DENABLE_CPIO=OFF
          -DENABLE_CNG=OFF
 diff --git a/packages/mpv.cmake b/packages/mpv.cmake
-index 9cb510ef..fc862a2a 100644
+index 9cb510e..d448714 100644
 --- a/packages/mpv.cmake
 +++ b/packages/mpv.cmake
-@@ -6,15 +6,11 @@ ExternalProject_Add(mpv
+@@ -6,15 +6,10 @@ ExternalProject_Add(mpv
          lcms2
          libarchive
          libass
@@ -154,14 +154,14 @@ index 9cb510ef..fc862a2a 100644
          libiconv
          libjpeg
          libpng
-         luajit
+-        luajit
 -        rubberband
          uchardet
 -        openal-soft
          mujs
          vulkan
          shaderc
-@@ -32,23 +28,25 @@ ExternalProject_Add(mpv
+@@ -32,23 +27,25 @@ ExternalProject_Add(mpv
          --cross-file=${MESON_CROSS}
          --default-library=shared
          --prefer-static
@@ -174,8 +174,9 @@ index 9cb510ef..fc862a2a 100644
 +        -Dcplayer=false
          -Dlibmpv=true
 -        -Dpdf-build=enabled
+-        -Dlua=enabled
 +        -Dpdf-build=disabled
-         -Dlua=enabled
++        -Dlua=disable
          -Djavascript=enabled
          -Dsdl2=enabled
          -Dlibarchive=enabled
@@ -191,7 +192,7 @@ index 9cb510ef..fc862a2a 100644
          -Dspirv-cross=enabled
          -Dvulkan=enabled
          -Dvapoursynth=enabled
-@@ -67,11 +65,6 @@ ExternalProject_Add_Step(mpv strip-binary
+@@ -67,11 +64,6 @@ ExternalProject_Add_Step(mpv strip-binary
  
  ExternalProject_Add_Step(mpv copy-binary
      DEPENDEES strip-binary
@@ -203,7 +204,7 @@ index 9cb510ef..fc862a2a 100644
      COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/libmpv-2.dll          ${CMAKE_CURRENT_BINARY_DIR}/mpv-dev/libmpv-2.dll
      COMMAND ${CMAKE_COMMAND} -E copy <BINARY_DIR>/libmpv.dll.a          ${CMAKE_CURRENT_BINARY_DIR}/mpv-dev/libmpv.dll.a
      COMMAND ${CMAKE_COMMAND} -E copy <SOURCE_DIR>/libmpv/client.h       ${CMAKE_CURRENT_BINARY_DIR}/mpv-dev/include/mpv/client.h
-@@ -91,14 +84,9 @@ mv $2 $2-git-\${GIT}")
+@@ -91,14 +83,9 @@ mv $2 $2-git-\${GIT}")
  ExternalProject_Add_Step(mpv copy-package-dir
      DEPENDEES copy-binary
      COMMAND chmod 755 ${RENAME}
@@ -221,5 +222,5 @@ index 9cb510ef..fc862a2a 100644
      LOG 1
  )
 -- 
-2.45.1.windows.1
+2.35.2.windows.1
 
