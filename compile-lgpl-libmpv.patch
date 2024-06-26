@@ -176,7 +176,7 @@ index 9cb510e..d448714 100644
 -        -Dpdf-build=enabled
 -        -Dlua=enabled
 +        -Dpdf-build=disabled
-+        -Dlua=disable
++        -Dlua=disabled
          -Djavascript=enabled
          -Dsdl2=enabled
          -Dlibarchive=enabled
